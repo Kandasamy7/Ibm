@@ -1,0 +1,92 @@
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+def create_pie_chart(data, labels, title):
+    plt.figure(figsize=(8, 8))
+    plt.pie(data, labels=labels, autopct='%1.1f%%', startangle=140)
+    plt.axis('equal')
+    plt.title(title)
+    plt.show()
+
+def create_bar_chart(data, labels, title):
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x=labels, y=data)
+    plt.title(title)
+    plt.xlabel('Food Subgroups')
+    plt.ylabel('Calorie Intake')
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    plt.show()
+
+def create_stacked_bar_chart(data, labels, title):
+    plt.figure(figsize=(10, 6))
+    bottom = np.zeros(len(labels))
+    for d in data:
+        plt.bar(labels, d, bottom=bottom)
+        bottom += np.array(d)
+    plt.title(title)
+    plt.xlabel('Food Subgroups')
+    plt.ylabel('Calorie Intake')
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    plt.legend(labels)
+    plt.show()
+
+def create_donut_chart(data, labels, title):
+    plt.figure(figsize=(8, 8))
+    plt.pie(data, labels=labels, autopct='%1.1f%%', startangle=140)
+    centre_circle = plt.Circle((0, 0), 0.70, fc='white')
+    fig = plt.gcf()
+    fig.gca().add_artist(centre_circle)
+    plt.axis('equal')
+    plt.title(title)
+    plt.show()
+
+def create_radar_chart(data, labels, title):
+    categories = labels
+    N = len(categories)
+    angles = [n / float(N) * 2 * np.pi for n in range(N)]
+    angles += angles[:1]
+    ax = plt.subplot(111, polar=True)
+    plt.xticks(angles[:-1], categories, color='black', size=10)
+    ax.set_rlabel_position(0)
+    plt.yticks(color="grey", size=8)
+    plt.ylim(0, max(data[0]))
+    for d in data:
+        d += d[:1]
+        ax.plot(angles, d, linewidth=1, linestyle='solid')
+        ax.fill(angles, d, 'b', alpha=0.1)
+    plt.title(title, size=20, color='black', y=1.1)
+    plt.show()
+
+def main():
+    food_groups = {
+        "Protein": ["Meat", "Fish", "Eggs", "Dairy", "Legumes", "Nuts"],
+        "Carbohydrates": ["Grains", "Fruits", "Vegetables", "Sugars"],
+        "Fats": ["Saturated Fats", "Trans Fats", "Monounsaturated Fats", "Polyunsaturated Fats"],
+        "Fiber": ["Soluble Fiber", "Insoluble Fiber"],
+        "Vitamins & Minerals": ["Vitamin A", "Vitamin B", "Vitamin C", "Vitamin D", "Vitamin E", "Vitamin K",
+                                "Calcium", "Iron", "Magnesium", "Potassium", "Sodium", "Zinc"],
+        "Water": ["Water"]
+    }
+
+    for group, subgroups in food_groups.items():
+        data = []
+        print(f"Enter calorie intake for {group}:")
+        if len(subgroups) == 1:
+            intake = float(input(f"  - {subgroups[0]}: "))
+            data.append(intake)
+        else:
+            for subgroup in subgroups:
+                intake = float(input(f"  - {subgroup}: "))
+                data.append(intake)
+
+        create_pie_chart(data, subgroups, f'{group} Distribution - Pie Chart')
+        create_bar_chart(data, subgroups, f'{group} Distribution - Bar Chart')
+        create_stacked_bar_chart([data], subgroups, f'{group} Distribution - Stacked Bar Chart')
+        create_donut_chart(data, subgroups, f'{group} Distribution - Donut Chart')
+        create_radar_chart([data], subgroups, f'{group} Distribution - Radar Chart')
+
+if __name__ == "__main__":
+    main()
